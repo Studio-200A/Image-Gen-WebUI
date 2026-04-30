@@ -24,7 +24,7 @@ A lightweight local web UI for text-to-image generation and image editing using 
 ```
  Browser (127.0.0.1:5000)
         │
-   ┌────▼────┐     .env_* configs       ┌────────────────┐
+   ┌────▼─────┐     .env_* configs      ┌────────────────┐
    │  Flask   │◄────────────────────────│  API Provider  │
    │ (app.py) │     OpenAI SDK          │  (remote)      │
    └────┬─────┘                         └────────────────┘
