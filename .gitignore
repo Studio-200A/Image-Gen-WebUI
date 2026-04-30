@@ -1,0 +1,11 @@
+credentials.json
+.env
+.venv/
+__pycache__/
+*.pyc
+outputs/
+uploads/
+edit/
+.claude/
+.DS_Store
+*.log

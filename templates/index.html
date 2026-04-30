@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Image-Gen-WebUI</title>
+<style>
+body{font-family:"PingFang SC","PingFang UI SC","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;background:#f5f7fb;margin:0;padding:40px}
+.container{max-width:1100px;margin:auto;background:white;padding:40px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+h1{margin-top:0}
+textarea{width:100%;height:440px;padding:12px;border:1px solid #ddd;border-radius:6px;resize:vertical;box-sizing:border-box}
+input,select,button{padding:10px;border-radius:6px;border:1px solid #ccc}
+button{background:#2563eb;color:white;border:none;cursor:pointer}
+button:hover{background:#1d4ed8}
+.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.7);display:none;align-items:center;justify-content:center;z-index:999}
+.spinner{width:60px;height:60px;border:6px solid #ddd;border-top-color:#2563eb;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.row{display:flex;gap:10px;margin-top:10px}
+.hint{color:#666;font-size:14px}
+.output img{max-width:100%;margin-top:15px;border-radius:6px;border:1px solid #ddd}
+.error{background:#fee;border:1px solid #fbb;padding:10px;border-radius:6px}
+.mode{background:#eef;padding:8px;border-radius:6px;margin-top:10px}
+.history{margin-top:40px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.grid img{width:100%;border-radius:6px;border:1px solid #ddd}
+.grid img{transition:transform .15s, box-shadow .15s}
+.grid img:hover{transform:scale(1.05);box-shadow:0 6px 18px rgba(0,0,0,.15)}
+
+.thumb{position:relative}
+.thumb img{position:relative;z-index:1}
+.delete-btn{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.65);color:#fff;border:none;border-radius:4px;padding:2px 6px;font-size:12px;cursor:pointer;z-index:2}
+.delete-btn:hover{background:rgba(0,0,0,.85)}
+
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:1000}
+.lightbox img{max-width:90%;max-height:90%;border-radius:8px}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading">
+<div class="spinner"></div>
+</div>
+
+<div class="lightbox" id="lightbox" onclick="hideLightbox()">
+<img id="lightboxImg">
+</div>
+
+<div class="container">
+
+<h1>Image Gen WebUI</h1>
+
+<p class="hint">Upload an image to edit, or leave empty to generate.</p>
+
+<form method="post" enctype="multipart/form-data" onsubmit="showLoading()">
+
+<input type="file" name="image">
+
+<p>
+<textarea name="prompt" required placeholder="Describe the image you want...">{{ prompt or "" }}</textarea>
+</p>
+
+<div style="margin-bottom:10px">
+<button type="button" onclick="copyPrompt()">Copy Prompt</button>
+</div>
+
+<div class="row">
+
+<select name="size">
+<option value="1024x1024">1024x1024</option>
+<option value="1536x1024">1536x1024</option>
+<option value="1024x1536">1024x1536</option>
+<option value="2048x1152" selected>2048x1152</option>
+<option value="2048x2048">2048x2048</option>
+<option value="3840x2160">3840x2160</option>
+</select>
+
+<select name="quality">
+<option value="standard">standard</option>
+<option value="high">high</option>
+</select>
+
+<button type="submit" id="generateBtn">Generate</button>
+
+</div>
+
+</form>
+
+{% if mode %}
+<div class="mode">Mode: {{ mode }}</div>
+{% endif %}
+
+{% if error %}
+<div class="error">
+<pre>{{ error }}</pre>
+</div>
+{% endif %}
+
+{% if output_image %}
+<div class="output">
+<h3>Result</h3>
+<p><a href="/{{ output_image }}" download>Download image</a></p>
+<img src="/{{ output_image }}">
+</div>
+{% endif %}
+
+{% if history %}
+<div class="history">
+<h3>Recent Images</h3>
+<div class="grid">
+{% for img in history %}
+<div class="thumb">
+<button class="delete-btn" onclick="deleteImage('{{ img }}');event.stopPropagation();">×</button>
+<img src="/{{ img }}" onclick="showLightbox('/{{ img }}')">
+</div>
+{% endfor %}
+</div>
+</div>
+{% endif %}
+
+</div>
+
+<script>
+function showLoading(){
+  document.getElementById('loading').style.display='flex';
+  const btn=document.getElementById('generateBtn');
+  if(btn){btn.disabled=true;btn.innerText='Generating...'}
+}
+
+function showLightbox(src){
+  const lb=document.getElementById('lightbox');
+  const img=document.getElementById('lightboxImg');
+  img.src=src;
+  lb.style.display='flex';
+}
+
+function hideLightbox(){
+  document.getElementById('lightbox').style.display='none';
+}
+
+function copyPrompt(){
+  const t=document.querySelector('textarea[name="prompt"]');
+  if(!t) return;
+  navigator.clipboard.writeText(t.value);
+}
+
+function deleteImage(path){
+  if(!confirm('是否删除该图片？')) return;
+  fetch('/delete',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({path})
+  }).then(()=>location.reload())
+}
+
+// auto scroll to result
+window.addEventListener('load',()=>{
+  const result=document.querySelector('.output');
+  if(result){result.scrollIntoView({behavior:'smooth'})}
+})
+</script>
+
+</body>
+</html>
