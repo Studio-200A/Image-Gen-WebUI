@@ -46,7 +46,7 @@ APP_PID=$!
 
 # Give Flask a moment to start then open browser
 sleep 1
-gio open http://127.0.0.1:5000
+python -m webbrowser http://127.0.0.1:5000
 
 wait $APP_PID
 
