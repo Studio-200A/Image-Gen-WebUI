@@ -6,6 +6,19 @@
 
 A lightweight local web UI for text-to-image generation and image editing using an OpenAI-compatible API. Runs entirely on localhost — no images or credentials leave your machine beyond the API provider.
 
+## Contents
+
+- [How It Works](#how-it-works)
+- [Features](#features)
+- [Quick Start](#quick-start)
+- [Manual Setup](#manual-setup)
+- [Configuration](#configuration)
+- [Project Structure](#project-structure)
+- [Scripts Reference](#scripts-reference)
+- [Dependencies](#dependencies)
+- [Security](#security)
+- [License](#license)
+
 ## How It Works
 
 ```
@@ -87,7 +100,8 @@ echo ".env_cherryin"               > .env_current
 
 All `.env_*` files and `.env_current` are **git-ignored** — never commit or share them.
 
-## Project Structure
+<details>
+<summary><b>Project Structure</b></summary>
 
 ```
 Image-Gen-WebUI/
@@ -104,7 +118,10 @@ Image-Gen-WebUI/
 └── uploads/               # Uploaded source images (git-ignored)
 ```
 
-## Scripts Reference
+</details>
+
+<details>
+<summary><b>Scripts Reference</b></summary>
 
 ### `app.py` — Web UI
 
@@ -128,6 +145,8 @@ Quickly check which image sizes a provider's model actually supports. Edit `SIZE
 ### `config_manager.py` — Shared Configuration Module
 
 Provides `load_current_config()`, `save_config()`, `switch_env()`, `get_client()`, and other helpers used by all Python scripts in the project.
+
+</details>
 
 ## Dependencies
 

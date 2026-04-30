@@ -4,6 +4,19 @@
 
 一个轻量级本地 Web UI，通过 OpenAI 兼容 API 实现文生图和图生图。服务仅绑定 localhost，图片和凭据不会离开本机（API 调用除外）。
 
+## 目录
+
+- [工作原理](#工作原理)
+- [功能](#功能)
+- [快速开始](#快速开始)
+- [手动启动](#手动启动)
+- [配置](#配置)
+- [项目结构](#项目结构)
+- [脚本说明](#脚本说明)
+- [依赖](#依赖)
+- [安全性](#安全性)
+- [协议](#协议)
+
 ## 工作原理
 
 ```
@@ -85,7 +98,8 @@ echo ".env_cherryin"               > .env_current
 
 所有 `.env_*` 文件和 `.env_current` 均已 git 忽略，**切勿提交或分享**。
 
-## 项目结构
+<details>
+<summary><b>项目结构</b></summary>
 
 ```
 Image-Gen-WebUI/
@@ -102,7 +116,10 @@ Image-Gen-WebUI/
 └── uploads/               # 上传的原图（git 已忽略）
 ```
 
-## 脚本说明
+</details>
+
+<details>
+<summary><b>脚本说明</b></summary>
 
 ### `app.py` — Web 界面
 
@@ -126,6 +143,8 @@ Image-Gen-WebUI/
 ### `config_manager.py` — 共享配置模块
 
 提供 `load_current_config()`、`save_config()`、`switch_env()`、`get_client()` 等函数，所有 Python 脚本共用。
+
+</details>
 
 ## 依赖
 
