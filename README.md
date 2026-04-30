@@ -1,5 +1,7 @@
 # Image-Gen-WebUI
 
+[中文](README_CN.md)
+
 > **Disclaimer:** This software is provided "as is", without warranty of any kind. Use at your own risk. By using this software you agree that the author is not liable for any damages, data loss, or API credit charges arising from its use.
 
 A lightweight local web UI for text-to-image generation and image editing using an OpenAI-compatible API. Runs entirely on localhost — no images or credentials leave your machine beyond the API provider.
