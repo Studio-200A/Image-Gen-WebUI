@@ -98,8 +98,10 @@ echo ".env_cherryin"               > .env_current
 
 所有 `.env_*` 文件和 `.env_current` 均已 git 忽略，**切勿提交或分享**。
 
+## 项目结构
+
 <details>
-<summary><b>项目结构</b></summary>
+<summary>点此展开</summary>
 
 ```
 Image-Gen-WebUI/
@@ -118,8 +120,10 @@ Image-Gen-WebUI/
 
 </details>
 
+## 脚本说明
+
 <details>
-<summary><b>脚本说明</b></summary>
+<summary>点此展开</summary>
 
 ### `app.py` — Web 界面
 

@@ -100,8 +100,10 @@ echo ".env_cherryin"               > .env_current
 
 All `.env_*` files and `.env_current` are **git-ignored** — never commit or share them.
 
+## Project Structure
+
 <details>
-<summary><b>Project Structure</b></summary>
+<summary>Click to expand</summary>
 
 ```
 Image-Gen-WebUI/
@@ -120,8 +122,10 @@ Image-Gen-WebUI/
 
 </details>
 
+## Scripts Reference
+
 <details>
-<summary><b>Scripts Reference</b></summary>
+<summary>Click to expand</summary>
 
 ### `app.py` — Web UI
 
