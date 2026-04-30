@@ -27,8 +27,10 @@ fi
 # Activate venv
 source .venv/bin/activate
 
-# Ensure venv deactivates on exit (including Ctrl+C)
+# Ensure clean shutdown on exit (including Ctrl+C)
 cleanup() {
+  kill $APP_PID 2>/dev/null || true
+  wait $APP_PID 2>/dev/null || true
   deactivate 2>/dev/null || true
 }
 trap cleanup EXIT INT TERM

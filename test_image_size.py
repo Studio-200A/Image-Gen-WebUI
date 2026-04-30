@@ -1,33 +1,24 @@
-from openai import OpenAI
 from PIL import Image
 import base64
 import os
 import sys
-import json
 
-# Disable proxy env vars for this script only
-for key in [
-    "http_proxy", "https_proxy", "all_proxy",
-    "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY",
-]:
-    os.environ.pop(key, None)
+from config_manager import load_current_config, get_client
 
-# ===== Load credentials =====
-CONFIG_FILE = "credentials.json"
-
-if not os.path.exists(CONFIG_FILE):
-    print("❌ credentials.json not found")
+# ===== Load credentials via config_manager =====
+config = load_current_config()
+if config is None:
+    print("No active environment config found.")
+    print("  Run the Web UI first to create a configuration,")
+    print("  or create a .env_<name> file manually.")
     sys.exit(1)
-
-with open(CONFIG_FILE, "r", encoding="utf-8") as f:
-    config = json.load(f)
 
 API_KEY = config.get("api_key")
 BASE_URL = config.get("base_url")
 MODEL = config.get("model", "openai/gpt-image-2")
 
 if not API_KEY or not BASE_URL:
-    print("❌ api_key or base_url missing in credentials.json")
+    print("api_key and base_url are required in the active config.")
     sys.exit(1)
 
 # ===== Config =====
@@ -46,10 +37,7 @@ SIZES_TO_TEST = [
 QUALITY = "high"
 # ==================
 
-client = OpenAI(
-    api_key=API_KEY,
-    base_url=BASE_URL,
-)
+client = get_client()
 
 os.makedirs("outputs", exist_ok=True)
 
@@ -75,9 +63,9 @@ for size in SIZES_TO_TEST:
         with Image.open(output_path) as img:
             actual_size = img.size
 
-        print(f"✅ Success: requested {size}, actual {actual_size[0]}x{actual_size[1]}")
+        print(f"Success: requested {size}, actual {actual_size[0]}x{actual_size[1]}")
         print(f"Saved: {output_path}")
 
     except Exception as e:
-        print(f"❌ Failed: {size}")
+        print(f"Failed: {size}")
         print(e)

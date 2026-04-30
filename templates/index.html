@@ -7,6 +7,15 @@
 body{font-family:"PingFang SC","PingFang UI SC","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;background:#f5f7fb;margin:0;padding:40px}
 .container{max-width:1100px;margin:auto;background:white;padding:40px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
 h1{margin-top:0}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;margin-bottom:20px}
+.tab{padding:8px 16px;background:#e5e7eb;color:#374151;border:1px solid #d1d5db;border-radius:6px 6px 0 0;cursor:pointer;font-size:14px}
+.tab:not(.active):hover{background:#d1d5db}
+.tab.active{background:#2563eb;color:white;border-color:#2563eb}
+.tab-content{padding:16px 0}
+
+/* Generate form */
 textarea{width:100%;height:440px;padding:12px;border:1px solid #ddd;border-radius:6px;resize:vertical;box-sizing:border-box}
 input,select,button{padding:10px;border-radius:6px;border:1px solid #ccc}
 button{background:#2563eb;color:white;border:none;cursor:pointer}
@@ -14,7 +23,7 @@ button:hover{background:#1d4ed8}
 .loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.7);display:none;align-items:center;justify-content:center;z-index:999}
 .spinner{width:60px;height:60px;border:6px solid #ddd;border-top-color:#2563eb;border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.row{display:flex;gap:10px;margin-top:10px}
+.row{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
 .hint{color:#666;font-size:14px}
 .output img{max-width:100%;margin-top:15px;border-radius:6px;border:1px solid #ddd}
 .error{background:#fee;border:1px solid #fbb;padding:10px;border-radius:6px}
@@ -32,6 +41,20 @@ button:hover{background:#1d4ed8}
 
 .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:1000}
 .lightbox img{max-width:90%;max-height:90%;border-radius:8px}
+
+/* Model Info form */
+.cfg-form{margin-top:10px}
+.cfg-row{margin-bottom:14px}
+.cfg-row label{display:block;margin-bottom:4px;font-weight:600;font-size:14px;color:#374151}
+.cfg-row input{width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;box-sizing:border-box}
+.cfg-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.cfg-bar select{flex:1;padding:8px;border:1px solid #ddd;border-radius:6px}
+.save-status{margin-left:10px;font-size:14px;font-weight:600}
+.cfg-current-label{font-size:13px;color:#6b7280;margin-bottom:4px}
+.btn-new{background:#10b981;font-size:14px;padding:6px 14px}
+.btn-new:hover{background:#059669}
+.btn-save{background:#2563eb;font-size:15px;padding:10px 28px;margin-top:4px}
+.btn-save:hover{background:#1d4ed8}
 </style>
 </head>
 <body>
@@ -47,6 +70,14 @@ button:hover{background:#1d4ed8}
 <div class="container">
 
 <h1>Image Gen WebUI</h1>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('generate')">Generate</button>
+  <button class="tab" onclick="switchTab('model-info')">Model Info</button>
+</div>
+
+<!-- ========== Generate Tab ========== -->
+<div id="tab-generate" class="tab-content">
 
 <p class="hint">Upload an image to edit, or leave empty to generate.</p>
 
@@ -113,7 +144,7 @@ button:hover{background:#1d4ed8}
 <div class="grid">
 {% for img in history %}
 <div class="thumb">
-<button class="delete-btn" onclick="deleteImage('{{ img }}');event.stopPropagation();">×</button>
+<button class="delete-btn" onclick="deleteImage('{{ img }}');event.stopPropagation();">x</button>
 <img src="/{{ img }}" onclick="showLightbox('/{{ img }}')">
 </div>
 {% endfor %}
@@ -123,7 +154,207 @@ button:hover{background:#1d4ed8}
 
 </div>
 
+<!-- ========== Model Info Tab ========== -->
+<div id="tab-model-info" class="tab-content" style="display:none">
+
+<div class="cfg-current-label" id="cfg-current-label">Current config: --</div>
+
+<div class="cfg-bar">
+  <select id="env-selector" onchange="onEnvSwitch()"></select>
+  <button class="btn-new" onclick="createNewEnv()">New</button>
+</div>
+
+<div class="cfg-form">
+  <div class="cfg-row">
+    <label>Provider Name</label>
+    <input type="text" id="cfg-provider-name" placeholder="e.g. cherryin">
+  </div>
+  <div class="cfg-row">
+    <label>Base URL</label>
+    <input type="url" id="cfg-base-url" placeholder="https://api.example.com/v1">
+  </div>
+  <div class="cfg-row">
+    <label>API Key</label>
+    <div style="display:flex;gap:8px">
+      <input type="password" id="cfg-api-key" style="flex:1" placeholder="sk-...">
+      <button id="btn-show-key" onclick="toggleApiKey()" style="white-space:nowrap">Show</button>
+    </div>
+  </div>
+  <div class="cfg-row">
+    <label>Model</label>
+    <input type="text" id="cfg-model" placeholder="openai/gpt-image-2">
+  </div>
+  <button class="btn-save" onclick="saveConfig()">Save</button>
+  <span class="save-status" id="save-status"></span>
+</div>
+
+</div>
+
+</div>
+
 <script>
+// ---- Tab switching ----
+function switchTab(tabName) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+
+  if (tabName === 'generate') {
+    document.querySelectorAll('.tab')[0].classList.add('active');
+    document.getElementById('tab-generate').style.display = 'block';
+  } else {
+    document.querySelectorAll('.tab')[1].classList.add('active');
+    document.getElementById('tab-model-info').style.display = 'block';
+    loadConfig();
+  }
+}
+
+// ---- Config state ----
+let currentEnvFile = null;
+let currentConfigData = null;
+let fullApiKey = null;
+
+async function loadConfig() {
+  const resp = await fetch('/api/config');
+  const data = await resp.json();
+
+  const selector = document.getElementById('env-selector');
+  selector.innerHTML = '';
+  data.files.forEach(f => {
+    const opt = document.createElement('option');
+    opt.value = f;
+    opt.textContent = f;
+    if (f === data.current) opt.selected = true;
+    selector.appendChild(opt);
+  });
+
+  if (data.no_config) {
+    currentEnvFile = null;
+    currentConfigData = null;
+    document.getElementById('cfg-current-label').textContent = 'Current config: none';
+    document.getElementById('cfg-provider-name').value = '';
+    document.getElementById('cfg-base-url').value = '';
+    document.getElementById('cfg-api-key').type = 'password';
+    document.getElementById('cfg-api-key').value = '';
+    document.getElementById('cfg-model').value = '';
+    document.getElementById('btn-show-key').textContent = 'Show';
+    fullApiKey = null;
+    if (!window._noConfigShown) {
+      window._noConfigShown = true;
+      alert('No configuration found. Please create a new profile and fill in your API credentials.');
+    }
+    return;
+  }
+
+  currentEnvFile = data.current;
+  currentConfigData = data.data;
+  document.getElementById('cfg-current-label').textContent = 'Current config: ' + data.current;
+  document.getElementById('cfg-provider-name').value = data.data.provider_name || '';
+  document.getElementById('cfg-base-url').value = data.data.base_url || '';
+  document.getElementById('cfg-api-key').type = 'password';
+  document.getElementById('cfg-api-key').value = data.data.api_key_masked || '';
+  document.getElementById('cfg-model').value = data.data.model || '';
+  document.getElementById('btn-show-key').textContent = 'Show';
+  fullApiKey = null;
+}
+
+async function toggleApiKey() {
+  const input = document.getElementById('cfg-api-key');
+  const btn = document.getElementById('btn-show-key');
+
+  if (input.type === 'password') {
+    if (!fullApiKey) {
+      const resp = await fetch('/api/config?show_key=1');
+      const data = await resp.json();
+      fullApiKey = data.data.api_key;
+    }
+    input.type = 'text';
+    input.value = fullApiKey;
+    btn.textContent = 'Hide';
+  } else {
+    input.type = 'password';
+    input.value = currentConfigData ? currentConfigData.api_key_masked : '****';
+    btn.textContent = 'Show';
+  }
+}
+
+async function saveConfig() {
+  if (!currentEnvFile) {
+    alert('No profile selected. Create one first.');
+    return;
+  }
+
+  const providerName = document.getElementById('cfg-provider-name').value.trim();
+  const baseUrl = document.getElementById('cfg-base-url').value.trim();
+  const model = document.getElementById('cfg-model').value.trim();
+  // Use full key if revealed, otherwise fall back to field value
+  let apiKey = fullApiKey;
+  if (!apiKey) {
+    apiKey = document.getElementById('cfg-api-key').value.trim();
+  }
+
+  if (!baseUrl) { alert('Base URL is required.'); return; }
+  if (!apiKey) { alert('API Key is required.'); return; }
+  if (!model) { alert('Model is required.'); return; }
+  if (apiKey.includes('...')) { alert('Please click Show and enter the full API Key before saving.'); return; }
+
+  const resp = await fetch('/api/config/save', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      env_file: currentEnvFile,
+      provider_name: providerName,
+      base_url: baseUrl,
+      api_key: apiKey,
+      model: model,
+    }),
+  });
+  const result = await resp.json();
+  const status = document.getElementById('save-status');
+  if (result.ok) {
+    status.textContent = 'Saved!';
+    status.style.color = 'green';
+    fullApiKey = apiKey;
+    await loadConfig();
+  } else {
+    status.textContent = 'Error: ' + (result.error || 'unknown');
+    status.style.color = 'red';
+  }
+  setTimeout(() => { status.textContent = ''; }, 3000);
+}
+
+async function onEnvSwitch() {
+  const envFile = document.getElementById('env-selector').value;
+  const resp = await fetch('/api/config/switch', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({env_file: envFile}),
+  });
+  const result = await resp.json();
+  if (result.ok) {
+    await loadConfig();
+  } else {
+    alert('Switch failed: ' + (result.error || 'unknown'));
+  }
+}
+
+async function createNewEnv() {
+  const name = prompt('Enter a name for the new profile (letters, numbers, underscores, hyphens):');
+  if (!name) return;
+  const resp = await fetch('/api/config/new', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({name}),
+  });
+  const result = await resp.json();
+  if (result.ok) {
+    currentEnvFile = result.env_file;
+    await loadConfig();
+  } else {
+    alert('Error: ' + (result.error || 'unknown'));
+  }
+}
+
+// ---- Generate tab helpers ----
 function showLoading(){
   document.getElementById('loading').style.display='flex';
   const btn=document.getElementById('generateBtn');
@@ -148,7 +379,7 @@ function copyPrompt(){
 }
 
 function deleteImage(path){
-  if(!confirm('是否删除该图片？')) return;
+  if(!confirm('Delete this image?')) return;
   fetch('/delete',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -156,11 +387,17 @@ function deleteImage(path){
   }).then(()=>location.reload())
 }
 
-// auto scroll to result
-window.addEventListener('load',()=>{
-  const result=document.querySelector('.output');
-  if(result){result.scrollIntoView({behavior:'smooth'})}
-})
+// ---- Init on page load ----
+window.addEventListener('load', async () => {
+  // Check if no config — auto-switch to Model Info tab
+  {% if no_config %}
+  switchTab('model-info');
+  {% endif %}
+
+  // auto scroll to result
+  const result = document.querySelector('.output');
+  if (result) { result.scrollIntoView({behavior:'smooth'}); }
+});
 </script>
 
 </body>
