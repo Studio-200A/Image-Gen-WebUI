@@ -1,5 +1,7 @@
 # Image-Gen-WebUI
 
+> **Disclaimer:** This software is provided **"as is"**, without warranty of any kind. Use at your own risk. By using this software you agree that the author is not liable for any damages, data loss, or API credit charges arising from its use.
+
 A lightweight local web UI for text-to-image generation and image editing using an OpenAI-compatible API. Runs entirely on localhost — no images or credentials leave your machine beyond the API provider.
 
 ## How It Works
@@ -140,3 +142,7 @@ Provides `load_current_config()`, `save_config()`, `switch_env()`, `get_client()
 - API key is masked by default in the Web UI (password field + Show/Hide toggle)
 - Proxy environment variables are stripped at startup to prevent request leakage
 - This is a **personal local tool** — not intended for multi-user or networked deployment
+
+## License
+
+[MIT License](LICENSE) — Copyright (c) 2026 Shawn Z
