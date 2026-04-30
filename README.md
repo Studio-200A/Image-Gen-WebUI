@@ -28,7 +28,7 @@ A lightweight local web UI for text-to-image generation and image editing using 
 - Text-to-image generation
 - Image editing / variation with prompt
 - Resolution support: 1024x1024 up to 3840x2160
-- Quality selection (standard / high)
+- Quality selection (auto / low / medium / high)
 - History gallery (last 20 generated images)
 - Lightbox preview, one-click download
 - Delete to trash (uses system trash instead of permanent removal)
