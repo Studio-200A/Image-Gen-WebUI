@@ -177,6 +177,9 @@ Image-Gen-WebUI/
 ## 依赖
 
 - **Python**（>=3.9）— 运行环境
+  - **Linux**：一般已预装（`python3 --version`）
+  - **macOS**：推荐通过 [Homebrew](https://brew.sh) 安装 — `brew install python`
+  - **Windows**：推荐通过 [Scoop](https://scoop.sh) 安装 [WinPython](https://winpython.github.io) — `scoop bucket add versions && scoop install winpython`
 - **Flask**（>=3.0）— Web 框架
 - **openai**（>=1.0）— OpenAI SDK，用于 API 通信
 - **send2trash**（>=1.8）— 安全删除到系统回收站

@@ -179,6 +179,9 @@ Platform-specific launchers that automatically set up the virtual environment, i
 ## Dependencies
 
 - **Python** (>=3.9) — runtime
+  - **Linux**: usually pre-installed (`python3 --version`)
+  - **macOS**: install via [Homebrew](https://brew.sh) — `brew install python`
+  - **Windows**: install via [Scoop](https://scoop.sh) + [WinPython](https://winpython.github.io) — `scoop bucket add versions && scoop install winpython`
 - **Flask** (>=3.0) — web framework
 - **openai** (>=1.0) — OpenAI SDK for API communication
 - **send2trash** (>=1.8) — safe delete to system trash bin
