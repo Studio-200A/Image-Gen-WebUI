@@ -268,6 +268,7 @@ def api_config_new():
         "api_key": "",
         "model": "",
     })
+    switch_env(env_file)
     return jsonify({"ok": True, "env_file": env_file})
 
 
