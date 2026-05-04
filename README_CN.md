@@ -54,19 +54,38 @@
 
 ## 快速开始
 
+**Linux / macOS：**
+
 ```bash
 ./run.sh
 ```
 
-脚本会自动检测 python3、创建 `.venv` 虚拟环境、安装依赖、启动服务并打开浏览器。
+**Windows (PowerShell)：**
+
+```powershell
+.\run.ps1
+```
+
+脚本会自动检测 Python 3、创建 `.venv` 虚拟环境、安装依赖、启动服务并打开浏览器。
 
 首次启动时，应用检测到无配置会自动切换到 **Model Info** 标签页，引导你创建第一个配置。
 
 ## 手动启动
 
+**Linux / macOS：**
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
+pip install -r requirements.txt
+python app.py
+```
+
+**Windows (PowerShell)：**
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python app.py
 ```
@@ -108,7 +127,8 @@ Image-Gen-WebUI/
 ├── app.py                 # Flask Web 服务（主入口）
 ├── config_manager.py      # 共享配置加载模块
 ├── test_image_size.py     # 分辨率兼容性快速测试
-├── run.sh                 # 一键启动脚本
+├── run.sh                 # 一键启动脚本（Linux/macOS）
+├── run.ps1                # 一键启动脚本（Windows）
 ├── requirements.txt       # Python 依赖
 ├── templates/
 │   └── index.html         # 单页 Web 界面（Jinja2 模板）
@@ -148,14 +168,19 @@ Image-Gen-WebUI/
 
 提供 `load_current_config()`、`save_config()`、`switch_env()`、`get_client()` 等函数，所有 Python 脚本共用。
 
+### `run.sh` / `run.ps1` — 一键启动
+
+平台专用的启动脚本，自动设置虚拟环境、安装依赖、启动服务并打开浏览器。`run.sh` 适用于 Linux/macOS，`run.ps1` 适用于 Windows PowerShell。
+
 </details>
 
 ## 依赖
 
+- **Python**（>=3.9）— 运行环境
 - **Flask**（>=3.0）— Web 框架
 - **openai**（>=1.0）— OpenAI SDK，用于 API 通信
 - **send2trash**（>=1.8）— 安全删除到系统回收站
-- **Pillow** — 验证图片分辨率（可选，test 和 edit 脚本使用）
+- **Pillow** — 验证图片分辨率（可选，test 脚本使用）
 
 ## 安全性
 

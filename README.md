@@ -56,19 +56,38 @@ A lightweight local web UI for text-to-image generation and image editing using 
 
 ## Quick Start
 
+**Linux / macOS:**
+
 ```bash
 ./run.sh
 ```
 
-The script will auto-detect python3, create a `.venv` virtual environment, install dependencies, start the server, and open your browser.
+**Windows (PowerShell):**
+
+```powershell
+.\run.ps1
+```
+
+The script will auto-detect Python 3, create a `.venv` virtual environment, install dependencies, start the server, and open your browser.
 
 On first launch, the app will detect no configuration and automatically switch to the **Model Info** tab where you can create your first profile.
 
 ## Manual Setup
 
+**Linux / macOS:**
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
+pip install -r requirements.txt
+python app.py
+```
+
+**Windows (PowerShell):**
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python app.py
 ```
@@ -110,7 +129,8 @@ Image-Gen-WebUI/
 ├── app.py                 # Flask web server (main entry point)
 ├── config_manager.py      # Shared config loader for all scripts
 ├── test_image_size.py     # Quick resolution compatibility tester
-├── run.sh                 # One-click startup script
+├── run.sh                 # One-click startup script (Linux/macOS)
+├── run.ps1                # One-click startup script (Windows)
 ├── requirements.txt       # Python dependencies
 ├── templates/
 │   └── index.html         # Single-page web UI (Jinja2 template)
@@ -150,14 +170,19 @@ Quickly check which image sizes a provider's model actually supports. Edit `SIZE
 
 Provides `load_current_config()`, `save_config()`, `switch_env()`, `get_client()`, and other helpers used by all Python scripts in the project.
 
+### `run.sh` / `run.ps1` — One-Click Startup
+
+Platform-specific launchers that automatically set up the virtual environment, install dependencies, start the server, and open the browser. `run.sh` for Linux/macOS, `run.ps1` for Windows PowerShell.
+
 </details>
 
 ## Dependencies
 
+- **Python** (>=3.9) — runtime
 - **Flask** (>=3.0) — web framework
 - **openai** (>=1.0) — OpenAI SDK for API communication
 - **send2trash** (>=1.8) — safe delete to system trash bin
-- **Pillow** — image resolution verification (optional, used by test/edit scripts)
+- **Pillow** — image resolution verification (optional, used by test scripts)
 
 ## Security
 
