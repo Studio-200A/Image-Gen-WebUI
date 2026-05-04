@@ -47,8 +47,8 @@ def load_config(env_file: str) -> Dict[str, str]:
                     key, _, value = line.partition("=")
                     data[key.strip()] = value.strip()
     # Default provider_name from filename stem
-    stem = env_file[5:]  # strip ".env_" prefix
-    data.setdefault("provider_name", stem)
+    if env_file.startswith(".env_"):
+        data.setdefault("provider_name", env_file[5:])
     return data
 
 

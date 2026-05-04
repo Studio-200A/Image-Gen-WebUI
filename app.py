@@ -97,7 +97,7 @@ def index():
     model = config.get("model", "openai/gpt-image-2") if config else "openai/gpt-image-2"
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_path = f"{OUTPUT_DIR}/output_{timestamp}.png"
+    output_path = os.path.join(OUTPUT_DIR, f"output_{timestamp}.png")
 
     try:
         c = ensure_client()
@@ -105,7 +105,7 @@ def index():
         if uploaded and uploaded.filename:
             # Edit mode
             safe_name = secure_filename(uploaded.filename)
-            input_path = f"{UPLOAD_DIR}/input_{timestamp}_{safe_name}"
+            input_path = os.path.join(UPLOAD_DIR, f"input_{timestamp}_{safe_name}")
             uploaded.save(input_path)
 
             with open(input_path, "rb") as f:
@@ -138,7 +138,7 @@ def index():
 
         return render_template(
             "index.html",
-            output_image=output_path,
+            output_image=output_path.replace("\\", "/"),
             error=None,
             prompt=prompt,
             mode=mode,

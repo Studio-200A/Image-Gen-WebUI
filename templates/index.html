@@ -30,8 +30,7 @@ button:hover{background:#1d4ed8}
 .mode{background:#eef;padding:8px;border-radius:6px;margin-top:10px}
 .history{margin-top:40px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
-.grid img{width:100%;border-radius:6px;border:1px solid #ddd}
-.grid img{transition:transform .15s, box-shadow .15s}
+.grid img{width:100%;border-radius:6px;border:1px solid #ddd;transition:transform .15s, box-shadow .15s}
 .grid img:hover{transform:scale(1.05);box-shadow:0 6px 18px rgba(0,0,0,.15)}
 
 .thumb{position:relative}
@@ -72,8 +71,8 @@ button:hover{background:#1d4ed8}
 <h1>Image Gen WebUI</h1>
 
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('generate')">Generate</button>
-  <button class="tab" onclick="switchTab('model-info')">Model Info</button>
+  <button class="tab active" data-tab="generate" onclick="switchTab('generate')">Generate</button>
+  <button class="tab" data-tab="model-info" onclick="switchTab('model-info')">Model Info</button>
 </div>
 
 <!-- ========== Generate Tab ========== -->
@@ -198,14 +197,13 @@ function switchTab(tabName) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
 
-  if (tabName === 'generate') {
-    document.querySelectorAll('.tab')[0].classList.add('active');
-    document.getElementById('tab-generate').style.display = 'block';
-  } else {
-    document.querySelectorAll('.tab')[1].classList.add('active');
-    document.getElementById('tab-model-info').style.display = 'block';
-    loadConfig();
-  }
+  const tabBtn = document.querySelector(`.tab[data-tab="${tabName}"]`);
+  if (tabBtn) tabBtn.classList.add('active');
+
+  const tabPanel = document.getElementById('tab-' + tabName);
+  if (tabPanel) tabPanel.style.display = 'block';
+
+  if (tabName === 'model-info') loadConfig();
 }
 
 // ---- Config state ----
