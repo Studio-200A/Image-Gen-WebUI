@@ -10,6 +10,7 @@ A lightweight local web UI for text-to-image generation and image editing using 
 
 - [How It Works](#how-it-works)
 - [Features](#features)
+- [Screenshots](#screenshots)
 - [Quick Start](#quick-start)
 - [Manual Setup](#manual-setup)
 - [Configuration](#configuration)
@@ -53,6 +54,16 @@ A lightweight local web UI for text-to-image generation and image editing using 
 - Delete to trash (uses system trash instead of permanent removal)
 - Loading indicator during generation
 - Prompt copy helper
+
+## Screenshots
+
+### Generate Tab
+
+![Generate Tab](screenshots/generate-tab.png)
+
+### Model Info Tab
+
+![Model Info Tab](screenshots/info-tab.png)
 
 ## Quick Start
 
